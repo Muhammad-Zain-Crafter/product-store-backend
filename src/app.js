@@ -41,5 +41,5 @@ app.get('/', (req, res) => {
 
 import productRouter from "./routes/product.route.js";
 app.use('/api/v1', productRouter)
-
+console.log(meow)
 export default app
