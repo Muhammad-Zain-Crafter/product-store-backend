@@ -1,4 +1,3 @@
-
 import app from "./app.js";
 import initDB from "./db/database.js";
 
