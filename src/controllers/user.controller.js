@@ -3,14 +3,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 // generate token
-const generateToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET, {
+const generateToken = (user) => {
+    return jwt.sign({id: user.userid, role: user.role}, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN || "7d"
     })
 }
 
 const registerUser = async (req, res) => {
-    const {name, email, password} = req.body;
+    const {name, email, password, role} = req.body;
     try {
         if (!name || !email || !password) {
             return res.status(400).json({ error: "Please provide all required fields" });
@@ -24,14 +24,14 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = await sql`
-            INSERT INTO users (name, email, password) values (${name}, ${email}, ${hashedPassword})
-            RETURNING userid, name, email
+            INSERT INTO users (name, email, password, role) values (${name}, ${email}, ${hashedPassword}, ${role || 'user'})
+            RETURNING userid, name, email, role
         `;
         res.status(201).json({
             success: true,
             message: "User registered successfully",
             data: newUser[0],
-            token: generateToken(newUser[0].userid)
+            token: generateToken(newUser[0])
         })
 
     } catch (error) {
@@ -63,9 +63,10 @@ const loginUser = async (req, res) => {
             data: {
                 id: user[0].userid,
                 name: user[0].name,
-                email: user[0].email
+                email: user[0].email,
+                role: user[0].role
             },
-            token: generateToken(user[0].userid)
+            token: generateToken(user[0])
         })
     } catch (error) {
         res.status(500).json({ error: "Server error" });

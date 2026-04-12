@@ -42,37 +42,37 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Product Store API');
 })
 
-app.use(async (req, res, next) => {
-  try {
-    const decision = await aj.protect(req,
-      {
-        requested: 1 // specifies that each req consumes 1 token from the bucket
-      }
-    )
-    if (decision.isDenied()) {
-      if (decision.reason.isRateLimit()) {
-        res.status(420).json({
-          error: "Too many requests, please try again later."
-        })
-      }
-      else if (decision.reason.isBot()) {
-        res.status(403).json({
-          error: "Bot access is not allowed."
-        })
-      }
-      else {
-        res.status(403).json({
-          error: "Forbidden request."
-        })
-      }
-      return 
+// app.use(async (req, res, next) => {
+//   try {
+//     const decision = await aj.protect(req,
+//       {
+//         requested: 1 // specifies that each req consumes 1 token from the bucket
+//       }
+//     )
+//     if (decision.isDenied()) {
+//       if (decision.reason.isRateLimit()) {
+//         res.status(420).json({
+//           error: "Too many requests, please try again later."
+//         })
+//       }
+//       else if (decision.reason.isBot()) {
+//         res.status(403).json({
+//           error: "Bot access is not allowed."
+//         })
+//       }
+//       else {
+//         res.status(403).json({
+//           error: "Forbidden request."
+//         })
+//       }
+//       return 
 
-    }
-    next()
-  } catch (error) {
-    console.log("Arcjet error: ", error)
-  }
-})
+//     }
+//     next()
+//   } catch (error) {
+//     console.log("Arcjet error: ", error)
+//   }
+// })
 
 
 import productRouter from "./routes/product.route.js";

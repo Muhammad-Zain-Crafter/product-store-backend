@@ -20,7 +20,7 @@ export const getProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
   const { name, price, image } = req.body;
 
-  if (!req.user || !req.user.userid) {
+  if (!req.user || !req.user.id) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",

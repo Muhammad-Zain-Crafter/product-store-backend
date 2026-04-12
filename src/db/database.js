@@ -26,6 +26,31 @@ async function initDB() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
+    // await sql`ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'`;
+    await sql`
+        CREATE TABLE IF NOT EXISTS cart (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(userid),
+          product_id INT REFERENCES products(id),
+          quantity INT DEFAULT 1
+        );
+    `;
+    await sql`
+        CREATE TABLE IF NOT EXISTS orders (
+          id SERIAL PRIMARY KEY,
+          user_id INT REFERENCES users(userid),
+          total_price DECIMAL(10, 2),
+          status VARCHAR(20) DEFAULT 'pending'
+        );
+    `;
+    await SQL`
+        CREATE TABLE IF NOT EXISTS order_item(
+          id SERIAL PRIMARY KEY,
+          order_id INT REFERENCES orders(id),
+          product_id INT REFERENCES products(id),
+          quantity INT DEFAULT 1
+        );
+    `;
     console.log("Database initialized successfully");
   } catch (error) {
     console.log("Error initializing database:", error);

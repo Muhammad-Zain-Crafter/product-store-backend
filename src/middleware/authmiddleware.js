@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 
+
 export const protect = (req, res, next) => {
+    console.log("HEADERS:", req.headers); // 👈 ADD THIS
+
     let token;
 
     if (req.headers.authorization?.startsWith("Bearer")) {
@@ -8,6 +11,7 @@ export const protect = (req, res, next) => {
     }
 
     if (!token) {
+        console.log("NO TOKEN FOUND"); 
         return res.status(401).json({ message: "Not authorized" });
     }
 
@@ -15,8 +19,9 @@ export const protect = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
-    } 
-    catch (error) {
-        res.status(401).json({ message: "Invalid token" });
+
+    } catch (error) {
+        console.log("JWT ERROR:", error.message);
+        return res.status(401).json({ message: "Invalid token" });
     }
 };
